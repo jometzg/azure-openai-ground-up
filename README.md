@@ -365,8 +365,7 @@ Content-Type: application/json
         {
             "role": "user",
             "content": "How do I grant the managed identity permissions to the mail enabled AD group?"
-        }
-    
+        }   
     ]
 }
 ```
@@ -395,3 +394,6 @@ This gives a response:
   }
 }
 ```
+In summary, conversations are just stateless API calls with the conversation history embedded in the prompt. Each of these items in the conversation history consumes tokens and so will be a factor in the performance and cost of the system. Ever increasing conversations can then hit a token limit. So control of conversation sessions is important for all applications.
+
+### Task 7 Retrieval Augmented Generation
