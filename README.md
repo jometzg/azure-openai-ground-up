@@ -211,3 +211,162 @@ Content-Type: application/json
     ]
 }
 ```
+
+This can produce the following response:
+```
+{
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "message": {
+        "content": "I'm sorry, but as an Azure assistant, I'm not able to answer questions about AWS. However, if you have any questions about Azure Container Service or any other Azure-related topic, feel free to ask!",
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1712679694,
+  "id": "chatcmpl-9C8VyVffqWzzUdDeGEp1L6IHK9Mim",
+  "model": "gpt-35-turbo",
+  "object": "chat.completion",
+  "system_fingerprint": null,
+  "usage": {
+    "completion_tokens": 43,
+    "prompt_tokens": 56,
+    "total_tokens": 99
+  }
+}
+```
+
+In general, it can take much testing and refinement to end up with an effective system prompt. Projects that use Azure OpenAI chat should set some time aside for prompt testing and refinement - this should be done with business or product owner stakeholders to make sure it matches their expectations.
+
+Prompt engineering is one of the main ways in which a user of the chat application can be stopped from subverting the intention of the chat application. This is know as [jailbreaking](https://learnprompting.org/docs/prompt_hacking/jailbreaking). End customer facing (as opposed to internally-facing) applications could be targets of jailbreaking attempts. Whilst most of these can be harmless, some of these may cause reputational damage to the organisation. 
+
+### Task 5 - understanding more on context
+Enter this query:
+```
+
+
+### chat completion - model trained date
+POST https://{{openaiendpoint}}.openai.azure.com/openai/deployments/{{openaichatmodel}}/chat/completions?api-version=2023-05-15
+api-key: {{openaikey}}
+Content-Type: application/json
+
+{
+    "messages": [
+        {
+            "role": "user",
+            "content": "Who is the reigning monarch of the United Kingdom?"
+        }
+    
+    ]
+}
+```
+If you ran this on a gpt-35 model, the answer is likely to be:
+```
+{
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "message": {
+        "content": "The reigning monarch of the United Kingdom is Queen Elizabeth II.",
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1712680378,
+  "id": "chatcmpl-9C8h0DTTiC7SrJ5604yzwuMDeWdiw",
+  "model": "gpt-35-turbo",
+  "object": "chat.completion",
+  "system_fingerprint": null,
+  "usage": {
+    "completion_tokens": 12,
+    "prompt_tokens": 28,
+    "total_tokens": 40
+  }
+}
+```
+gpt4 may give a more accurate answer.
+
+This is to illustrate that the completion is based on 2 things. Firstly when the underlying model's training was performed and secondly on the prompt given. This is important to understand.
+
+### Task 6 - conversations
+As previously discussed, the Azure OpenAI API is stateless. That is it can only do a completion based upon the combination of its knowledge from its training and the prompt sent to it.
+
+To mimic a conversation, each step of that conversation will add to the context sent to the API. At an API level, this is really simple, the JSON message sent to the API must add each user and *assistant* prompt as the user progresses through the conversation.
+
+```
+### chat completion - multiple prompt - initial question:
+POST https://{{openaiendpoint}}.openai.azure.com/openai/deployments/{{openaichatmodel}}/chat/completions?api-version=2023-05-15
+api-key: {{openaikey}}
+Content-Type: application/json
+
+{
+    "messages": [
+        {
+            "role": "system",
+            "content": "You are an Azure-only assistant. Only give answers from Azure documentation. If the customer asks about another cloud provider, suggest the Azure equivalent."
+        },
+        {
+            "role": "user",
+            "content": "can I assign a managed identity to an Azure mail enabled AD group?"
+        }
+    ]
+}
+```
+If this gets the response:
+```
+{
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "message": {
+        "content": "No, you cannot assign a managed identity to an Azure mail-enabled AD group. A managed identity is a service principal, which represents an instance of an Azure service, and it should be used to authenticate and access Azure resources. On the other hand, an Azure mail-enabled AD group is used primarily to manage email addresses for a group, and it doesn't have authentication capabilities. However, you can assign a managed identity to an Azure resource group or an Azure virtual machine to provide authentication to access resources within that group or VM.",
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1712681035,
+  "id": "chatcmpl-9C8rbRMOYFhRmBdEbZmCxrg9q7UEX",
+  "model": "gpt-35-turbo",
+  "object": "chat.completion",
+  "system_fingerprint": null,
+  "usage": {
+    "completion_tokens": 105,
+    "prompt_tokens": 55,
+    "total_tokens": 160
+  }
+}
+```
+So, for a conversation, all we do is add an *assistant* section into the next request with the previous repsonse:
+
+```
+### chat completion -multiple prompts first answer and second question
+POST https://{{openaiendpoint}}.openai.azure.com/openai/deployments/{{openaichatmodel}}/chat/completions?api-version=2023-05-15
+api-key: {{openaikey}}
+Content-Type: application/json
+
+{
+    "messages": [
+        {
+            "role": "system",
+            "content": "You are an Azure-only assistant. Only give answers from Azure documentation. If the customer asks about another cloud provider, suggest the Azure equivalent."
+        },
+        {
+            "role": "user",
+            "content": "can I assign a managed identity to an Azure mail enabled AD group?"
+        },
+        {
+            "role": "assistant",
+            "content": "Yes, it is possible to assign a managed identity to an Azure mail-enabled AD group. This can be done through Azure Active Directory and the steps to do so are outlined in the Microsoft documentation: Assign a managed identity to an Azure AD Mail Enabled Security Group"
+        },
+        {
+            "role": "user",
+            "content": "How do I grant the managed identity permissions to the mail enabled AD group?"
+        }
+    
+    ]
+}
+```
