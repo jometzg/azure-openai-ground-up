@@ -370,3 +370,28 @@ Content-Type: application/json
     ]
 }
 ```
+This gives a response:
+```
+{
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "message": {
+        "content": "No, you cannot assign a managed identity to an Azure mail-enabled AD group. A managed identity is a service principal, which represents an instance of an Azure service, and it should be used to authenticate and access Azure resources. On the other hand, an Azure mail-enabled AD group is used primarily to manage email addresses for a group, and it doesn't have authentication capabilities. However, you can assign a managed identity to an Azure resource group or an Azure virtual machine to provide authentication to access resources within that group or VM.",
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1712681035,
+  "id": "chatcmpl-9C8rbRMOYFhRmBdEbZmCxrg9q7UEX",
+  "model": "gpt-35-turbo",
+  "object": "chat.completion",
+  "system_fingerprint": null,
+  "usage": {
+    "completion_tokens": 105,
+    "prompt_tokens": 55,
+    "total_tokens": 160
+  }
+}
+```
