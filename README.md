@@ -84,6 +84,8 @@ Connection: close
 ```
 What can be seen from above is that it worked (there will be a different answer each time) and that it used 4 prompt tokens and 10 completion tokens.
 
+Try varying the *max_tokens* to see how this impacts the response.
+
 There are also a lot of potentially interesting HTTP headers which may be used to understand more about the service and its capacity.
 
 ### Task 2 - parameterising the REST call
@@ -128,3 +130,84 @@ The above should allow you to reuse the parameters on later requests. A better w
 }
 ```
 In the above, there are local and production for distinct values and $shared for common values across environments. In VS Code this gets stored in .vscode with the name *settings.json*. This is the preferred method for dealing with variables, especially secrets such as OpenAI keys.
+
+### Task 3 - chat completions
+In the first examples, we are providing a simple prompt which then gets completed.
+
+Most OpenAI implementations want to do chat - that is one or more questions that form a chat. This allows the easy creation of starting with a general question and then later asking a another question about the response. This mimics the ways in which humans discover information from others - starting more general and then honing the next question based on the response.
+
+The format of the HTTP requests for chat completions is slightly different. It has a slightly different URL and a different request format.
+
+```
+### first chat completion. Note the URL change and the request body change
+
+POST https://{{openaiendpoint}}.openai.azure.com/openai/deployments/{{openaichatmodel}}/chat/completions?api-version=2023-05-15
+api-key: {{openaikey}}
+Content-Type: application/json
+
+{
+    "messages": [
+        {
+            "role": "user",
+            "content": "Does Azure OpenAI support customer managed keys?"
+        }
+    
+    ]
+}
+```
+Executing this request should produce something like (removing the response headers to save space):
+```
+{
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "message": {
+        "content": "Yes, Azure OpenAI supports customer managed keys through Azure Key Vault. Customers can manage encryption keys for their OpenAI resources in Azure Key Vault and use them for data encryption at rest and in transit. By integrating Azure Key Vault with OpenAI, customers can ensure their data is secure and compliant with their organization’s security policies.",
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1712678922,
+  "id": "chatcmpl-9C8JWAZBcrs5736QjPMGKZAKX4WLV",
+  "model": "gpt-35-turbo",
+  "object": "chat.completion",
+  "system_fingerprint": null,
+  "usage": {
+    "completion_tokens": 65,
+    "prompt_tokens": 17,
+    "total_tokens": 82
+  }
+}
+```
+Note that the response format is also different.
+
+### Task 4 system prompts
+In most chat scenarios our customers may want to build, just presenting Azure OpenAI with the user's query or prompt may be a little too uncontrolled. It would be really useful if the chat could be directed to answer the question in specfic ways or to restrict how the chat will respond to a user's prompt.
+
+This is a whole subject area called [prompt engineering](https://en.wikipedia.org/wiki/Prompt_engineering). All of this us used to create a *system prompt* that gets sent to the API alongdise the actual user's prompt.
+
+There is much work out there to help craft system prompts for specific use cases. This is outside this tutorial, but there are many resources that can help craft system prompts.
+
+At an API level, a system prompt is merely another section in the JSON body that is sent with the HTTP POST request. In general, system prompts are added by the application sending the requests to the OpenAI REST API and not by the user. In this way, the system prompt can protect both the organisation and the user from prompts that doi not succeed in correctly answering a user query. Try this sample below:
+
+```
+### chat completion - but restrict output to Azure only conversations!!
+POST https://{{openaiendpoint}}.openai.azure.com/openai/deployments/{{openaichatmodel}}/chat/completions?api-version=2023-05-15
+api-key: {{openaikey}}
+Content-Type: application/json
+
+{
+    "messages": [
+        {
+            "role": "system",
+            "content": "You are an Azure-only assistant. Only give answers from Azure documentation. If the customer asks about another cloud provider, politely decline and respond that you are an Azure assistant."
+        },
+        {
+            "role": "user",
+            "content": "In AWS what is the container service called?"
+        }
+    
+    ]
+}
+```
