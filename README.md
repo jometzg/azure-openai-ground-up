@@ -25,7 +25,7 @@ In addition to the above Azure resources, the tutorial will use Visual Studio co
 The above should allow you to run all of the steps in this tutorial.
 
 ## Tutorial Steps
-### Your first OpenAI call
+### Task 1 - your first OpenAI call
 Inside Visual Studio code, create a new file and save as "openai-samples.http". This will then indicate to VS Code that the REST client can then use this file to execute HTTP REST requests.
 
 In the blank file type:
@@ -39,7 +39,7 @@ api-key: YOUR_RESOURCE_KEY
     "max_tokens": 10
 }
 ```
-Save and a "send Request" link should appear. Click the link.
+Replace the 3 placeholders with the values from your Azure OpenAI instance. Save and a "Send Request" link should appear. Click the link.
 
 You should get a response like below:
 ```
@@ -82,3 +82,49 @@ Connection: close
   }
 }
 ```
+What can be seen from above is that it worked (there will be a different answer each time) and that it used 4 prompt tokens and 10 completion tokens.
+
+There are also a lot of potentially interesting HTTP headers which may be used to understand more about the service and its capacity.
+
+### Task 2 - parameterising the REST call
+The REST client has several ways in which calls to APIs can be parameterised. This is really useful for later calls. The simplest approach is to declare some variables, set their value and then use these variables in the REST call.
+
+The REST client has the means of having multiple requests in one file. These can be separated by a comment line. Add below to the file after the first request
+```
+### a parameterised request to completions
+@openaiendpoint=YOUR_RESOURCE_NAME
+@openaichatmode=YOUR_DEPLOYMENT_NAME
+@openaikey=YOUR_RESOURCE_KEY
+
+POST https://{{openaiendpoint}}.openai.azure.com/openai/deployments/{{openaichatmodel}}/completions?api-version=2023-05-15
+api-key: {{openaikey}}
+Content-Type: application/json
+
+{
+    "prompt": "Once upon a time",
+    "max_tokens": 10
+}
+```
+
+The above should allow you to reuse the parameters on later requests. A better way for files that are going to be put into a GitHub repo is to use an environment variable with VS Code. This firstly keeps secrets out of the file, but it also allows named environments that may have different values. For example:
+```
+"rest-client.environmentVariables": {
+    "$shared": {
+        "version": "v1",
+        "prodToken": "foo",
+        "nonProdToken": "bar"
+    },
+    "local": {
+        "version": "v2",
+        "host": "localhost",
+        "token": "{{$shared nonProdToken}}",
+        "secretKey": "devSecret"
+    },
+    "production": {
+        "host": "example.com",
+        "token": "{{$shared prodToken}}",
+        "secretKey" : "prodSecret"
+    }
+}
+```
+In the above, there are local and production for distinct values and $shared for common values across environments. In VS Code this gets stored in .vscode with the name *settings.json*. This is the preferred method for dealing with variables, especially secrets such as OpenAI keys.
