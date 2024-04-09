@@ -25,8 +25,8 @@ In addition to the above Azure resources, the tutorial will use Visual Studio co
 The above should allow you to run all of the steps in this tutorial.
 
 ## Tutorial Steps
-### Your first OpenAI chat call
-Inside Visual Studio code, create a new file and save as "OpenAI-samples.http". This will then indicate to VS Code that the REST client can then use this file to execute HTTP REST requests.
+### Your first OpenAI call
+Inside Visual Studio code, create a new file and save as "openai-samples.http". This will then indicate to VS Code that the REST client can then use this file to execute HTTP REST requests.
 
 In the blank file type:
 ```
