@@ -415,7 +415,7 @@ The most straightforward service for this is on Azure is [Azure AI Search](https
 
 ![alt text](./images/rag-architecture-diagram.png "RAG Overview")
 
-In the diagram above, Azure AI Search is used to index data from one of a number of potential sources. One straightforward example is PDF documents stored in an Azure Blob Storage container. The *indexing* process is completely separate from the querying prompt process, so in order to use Azure AI Search in a RAG process, there must be a process that scans the blob storage container and indexes the result. This will be covered in later tasks, but what you end up with is a named index that may be used on the prompt.
+In the diagram above, Azure AI Search is used to index data from one of a number of potential sources. One straightforward example is PDF documents stored in an Azure Blob Storage container. The *indexing* process is completely separate from the querying prompt process, so in order to use Azure AI Search in a RAG process, there must be a background process that scans the blob storage container and indexes the result. This will be covered in later tasks, but what you end up with is a named index that may be used on the prompt.
 
 In the RAG process, the user's prompt is first sent to the retrieval engine - in this case Azure AI Search. The results of this query, which will generally be a short list of document fragments and then used to build the prompt to Azure OpenAI, which is then sent and the results retrieved. This is a simple RAG process. by default, the indexing process in Azure AI Search creates a series of document fragments which are about 1000 tokens long and the default behaviour is for the Azure AI Search query to return the first 5 matching document fragments. This therefore makes a prompt of about 5k tokens - well within the capabilities of most Azure OpenAI model deployments.
 
@@ -485,7 +485,9 @@ Content-Type: application/json
     ]
 }
 ```
-In the above, the user is asking about the performance reivew process against the *handbook* index in the Azure AI Search instance jjjdemosearch
+In the above, the user is asking about the performance reivew process against the *handbook* index in the Azure AI Search instance jjjdemosearch.
+
+Azure OpenAI itself needs to authenticate against Azure AI Search to allow it to access the index. The simplest solution is an API key. Production deployments are likely to use the managed identity of Azure OpenAI, thus a key not being needed. For this to work a managed identity of the Azure OpenAI instance needs to be enabled and a role assignment created to Azure AI Search with the correct role. 
 
 The response is a more complex document with the answer in the *content* tag plus some citations. These citations are extracted from Azure AI Search and are included in the response so that the user interface can reference these citations without futher calls to Azure OpenAI.
 ```
