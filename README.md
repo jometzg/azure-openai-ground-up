@@ -404,7 +404,40 @@ In previous tasks we have established that:
 
 [Retrieval Augmented Generation](https://learn.microsoft.com/en-us/azure/search/retrieval-augmented-generation-overview) (RAG) seeks to solve this problem by having a multi-step process to add extra grounding data to the prompt - without exceeeding prompt limits. This is implemented by having another service that works alongside Azure OpenAI to retrieve document fragments from previously indexed data. 
 
-The most straightforward service for this is on Azure is Azure AI Search (used to be called Cognitive Search). Though it needs to be stated that RAG can use other mechanisms. But for now, this will concentrate on the simplest approach on Azure.
+The most straightforward service for this is on Azure is [Azure AI Search](https://learn.microsoft.com/en-us/azure/search/search-what-is-azure-search) (used to be called Cognitive Search). Though it needs to be stated that RAG can use other mechanisms. But for now, this will concentrate on the simplest approach on Azure.
 
 ![alt text](./images/rag-architecture-diagram.png "RAG Overview")
 
+In the diagram above, Azure AI Search is used to index data from one of a number of potential sources. One straightforward example is PDF documents stored in an Azure Blob Storage container. The *indexing* process is completely separate from the querying prompt process, so in order to use Azure AI Search in a RAG process, there must be a process that scans the blob storage container and indexes the result. This will be covered in later tasks, but what you end up with is a named index that may be used on the prompt.
+
+The Azure OpenAI REST API already implements a standardised RAG process - so customers do not (initially at least) need to build this RAG process in code. This is documented under [completion extensions](https://learn.microsoft.com/en-us/azure/ai-services/openai/reference#completions-extensions). The REST API call then defines the datasource for the indexed data as well as the actual user and system prompts.
+
+```
+curl -i -X POST YOUR_RESOURCE_NAME/openai/deployments/YOUR_DEPLOYMENT_NAME/extensions/chat/completions?api-version=2023-06-01-preview \
+-H "Content-Type: application/json" \
+-H "api-key: YOUR_API_KEY" \
+-d \
+'
+{
+    "temperature": 0,
+    "max_tokens": 1000,
+    "top_p": 1.0,
+    "dataSources": [
+        {
+            "type": "AzureCognitiveSearch",
+            "parameters": {
+                "endpoint": "YOUR_AZURE_COGNITIVE_SEARCH_ENDPOINT",
+                "key": "YOUR_AZURE_COGNITIVE_SEARCH_KEY",
+                "indexName": "YOUR_AZURE_COGNITIVE_SEARCH_INDEX_NAME"
+            }
+        }
+    ],
+    "messages": [
+        {
+            "role": "user",
+            "content": "What are the differences between Azure Machine Learning and Azure AI services?"
+        }
+    ]
+}
+'
+```
