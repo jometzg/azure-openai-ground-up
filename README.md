@@ -396,7 +396,7 @@ This gives a response:
 ```
 In summary, conversations are just stateless API calls with the conversation history embedded in the prompt. Each of these items in the conversation history consumes tokens and so will be a factor in the performance and cost of the system. Ever increasing conversations can then hit a token limit. So control of conversation sessions is important for all applications.
 
-### Task 7 Retrieval Augmented Generation
+## Retrieval Augmented Generation
 In previous tasks we have established that:
 1. The Azure OpenAI APIs are stateless
 2. The total context that the APIs have is therefore a combination of when the model was trained (its knowledge) and the prompt you give it.
@@ -441,3 +441,6 @@ curl -i -X POST YOUR_RESOURCE_NAME/openai/deployments/YOUR_DEPLOYMENT_NAME/exten
 }
 '
 ```
+
+### Task 7 Your first search against an indexed PDF
+To simplify this next step, a previous index will be provided that has already been populated from a ficticious corporation's HR manual.
