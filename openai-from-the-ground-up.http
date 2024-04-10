@@ -4,7 +4,7 @@
 ### these can either be defined in a file, or in .vscode/settings.json
 ### variables
 @openaiendpoint=YOUR_RESOURCE_NAME
-@openaichatmode=YOUR_DEPLOYMENT_NAME
+@openaichatmode=gpt-35-turbo
 @openaikey=YOUR_RESOURCE_KEY
 
 ### Task 1 Your first OpenAI call - substitute the values below
@@ -121,9 +121,9 @@ Content-Type: application/json
 }
 
 ### Task 7 Your first search against an indexed PDF
-@searchkey =REPLACE_THIS
-@searchinstance =jjjdemosearch
-@searchindex =handbook
+@searchkey=REPLACE_THIS
+@searchinstance=jjjdemosearch
+@searchindex=handbook
 
 POST https://{{openaiendpoint}}.openai.azure.com/openai/deployments/{{openaichatmodel}}/chat/completions?api-version=2024-02-01
 api-key: {{openaikey}}
@@ -207,6 +207,14 @@ Content-Type: application/json
 }
 
 ### Task 10 Create a data source
+@blobaccount=YOUR_STORAGE_ACCOUNT_NAME
+@blobkey=YOUR_STORAGE_ACCOUNT_KEY
+@blobcontainer=hrdocs
+@searchinstance=YOUR_AI_SEARCH_SERVICE_NAME
+@searchkey=YOUR_AI_SEARCH_SERVICE_KEY
+@searchindex=handbook
+@searchdatasource=hrdatasource
+
 POST https://{{searchinstance}}.search.windows.net/datasources?api-version=2020-06-30
 Content-Type: application/json
 api-key: {{searchkey}}
@@ -219,6 +227,8 @@ api-key: {{searchkey}}
 }
 
 ### Task 11 Create and Index
+@hrindex=hrdocsindex
+
 POST https://{{searchinstance}}.search.windows.net/indexes?api-version=2020-06-30
 Content-Type: application/json
 api-key: {{searchkey}}
@@ -235,6 +245,8 @@ api-key: {{searchkey}}
 }
 
 ### Task 12 Create an Indexer
+@searchindexer=hrdocsindexer
+
 POST https://{{searchinstance}}.search.windows.net/indexers?api-version=2020-06-30
 Content-Type: application/json
 api-key: {{searchkey}}
@@ -259,7 +271,34 @@ api-key: {{searchkey}}
   "fieldMappings" : [ ]
 }
 
-### Task 13 Get the tokens from some text
+### Task 13 Search against your own index
+POST https://{{openaiendpoint}}.openai.azure.com/openai/deployments/{{openaichatmodel}}/chat/completions?api-version=2024-02-01
+api-key: {{openaikey}}
+Content-Type: application/json
+
+{
+    "messages": [
+        {
+            "role": "user",
+            "content": "what is the performance review process?"
+        }
+    ],
+    "data_sources": [
+        {
+            "type": "azure_search",
+            "parameters": {
+                "endpoint": "https://{{searchinstance}}.search.windows.net",
+                "index_name": "{{searchindex}}",
+                "authentication": {
+                    "type": "api_key",
+                    "key": "{{searchkey}}"
+                }
+            }
+        }
+    ]
+}
+
+### Task 14 Get the tokens from some text
 POST https://{{searchinstance}}.search.windows.net/indexes/{{searchindex}}/analyze?api-version=2020-06-30
 Content-Type: application/json
 api-key: {{searchkey}}
@@ -278,7 +317,7 @@ aerospace industry for years to come.
   "analyzer": "standard"
 }
 
-### Task 14 Generate the embeddings of some text
+### Task 15 Generate the embeddings of some text
 POST https://{{openaiendpoint}}.openai.azure.com/openai/deployments/{{openaiembeddingmodel}}/embeddings?api-version=2023-06-01-preview
 api-key: {{openaikey}}
 Content-Type: application/json
