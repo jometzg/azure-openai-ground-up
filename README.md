@@ -721,8 +721,42 @@ api-key: {{searchkey}}
 
 If all goes well, the indexer should run and this should result in document chunks being created in the index and visible in the portal. 
 
-This index then may be used as the chat with data source for later OpenAI queries. Try the earlier samples against the new index.
+This index then may be used as the chat with data source for later OpenAI queries. 
 
+### Task 13 Search against your new index
+Firstly, the indexing process can be seen in action in the Azure portal. To be able to query the new index, then:
+1. the indexer run needs to have been completed
+2. there are rows in the new index.
+
+Check these in the portal. If all is well, then run the quiry below (this is one that has been run before, but the Azure AI Search should be yours and with a newly populated index.
+
+```
+POST https://{{openaiendpoint}}.openai.azure.com/openai/deployments/{{openaichatmodel}}/chat/completions?api-version=2024-02-01
+api-key: {{openaikey}}
+Content-Type: application/json
+
+{
+    "messages": [
+        {
+            "role": "user",
+            "content": "what is the performance review process?"
+        }
+    ],
+    "data_sources": [
+        {
+            "type": "azure_search",
+            "parameters": {
+                "endpoint": "https://{{searchinstance}}.search.windows.net",
+                "index_name": "{{searchindex}}",
+                "authentication": {
+                    "type": "api_key",
+                    "key": "{{searchkey}}"
+                }
+            }
+        }
+    ]
+}
+```
 
 ## Tokens and Embeddings
 The concept of tokens has already been discussed. These roughly relate to words.
@@ -735,7 +769,7 @@ https://learn.microsoft.com/en-us/azure/ai-services/openai/concepts/understand-e
 
 Embeddings are therefore useful in searching efficiently for things that have similar meaning. The same text in a different language, will have similar emnbedding representation, which is useful for multi-lingual use cases.
 
-### Task 13 Get the tokens from some text
+### Task 14 Get the tokens from some text
 This uses an Azure AI Search instance to tokenise the text.
 ```
 POST https://{{searchinstance}}.search.windows.net/indexes/{{searchindex}}/analyze?api-version=2020-06-30
@@ -795,7 +829,7 @@ The response (abbreviated) should be:
 etc etc
 ```
 
-### Task 14 Generate the embeddings of some text
+### Task 15 Generate the embeddings of some text
 To create the embedding version of some text required the use of Azure OpenAI. As it it Azure OpenAI that will consume these. This is important as if another embedding tool is used, then its vectors may not relate to those in a trained Azure OpenAI model.
 
 At the start in the prerequisites, another model was deployed to your OpenAI instance *text-embedding-ada-002* - it is this model that is used for generating embeddings.
