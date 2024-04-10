@@ -644,3 +644,144 @@ The process to create an index at its most basic is to:
 You should then have an index with some data. This can be accessed in the Azure Portal:
 
 ![alt text](./images/populated_index.png "Populated index")
+
+As can be seen above, the index contains a series of columns, one of which contains chunks of the PDF document. Each chunk is about 1000 tokens, so one document may be represented by 1 or n rows in the index. Multiple documents can be represented in the same index.
+
+### Task 10 Create a data source
+For this to work, take the PDF document in samples and put this in a blob container of an Azure Storage Account.
+
+Next run this query to create the data source against that blob container:
+```
+
+POST https://{{searchinstance}}.search.windows.net/datasources?api-version=2020-06-30
+Content-Type: application/json
+api-key: {{searchkey}}
+
+{
+    "name" : "{{searchdatasource}}",
+    "type" : "azureblob",
+    "credentials" : { "connectionString" : "DefaultEndpointsProtocol=https;AccountName={{blobaccount}};AccountKey={{blobkey}};" },
+    "container" : { "name" : "{{blobcontainer}}", "query" : "" }
+}
+```
+
+### Task 11 Create and Index
+```
+POST https://{{searchinstance}}.search.windows.net/indexes?api-version=2020-06-30
+Content-Type: application/json
+api-key: {{searchkey}}
+
+{
+    "name" : "{{searchdemoindexerdefinition}}",
+    "fields": [
+        { "name": "ID", "type": "Edm.String", "key": true, "searchable": false },
+        { "name": "content", "type": "Edm.String", "searchable": true, "filterable": false },
+        { "name": "metadata_storage_name", "type": "Edm.String", "searchable": false, "filterable": true, "sortable": true  },
+        { "name": "metadata_storage_size", "type": "Edm.Int64", "searchable": false, "filterable": true, "sortable": true  },
+        { "name": "metadata_storage_content_type", "type": "Edm.String", "searchable": false, "filterable": true, "sortable": true }       
+    ]
+}
+```
+
+### Task 12 Create an Indexer
+This step uses the two defintions above to create and run an indexer. This indexer can be defined to run on a schedule to allow it to check for new documents being uploaded to the data source.
+
+```
+POST https://{{searchinstance}}.search.windows.net/indexers?api-version=2020-06-30
+Content-Type: application/json
+api-key: {{searchkey}}
+
+{
+  "name" : "{{searchindexer}}",
+  "dataSourceName" : "{{searchdatasource}}",
+  "targetIndexName" : "{{searchdemoindexerdefinition}}",
+  "parameters": {
+      "batchSize": null,
+      "maxFailedItems": null,
+      "maxFailedItemsPerBatch": null,
+      "base64EncodeKeys": null,
+      "configuration": {
+          "indexedFileNameExtensions" : ".pdf,.docx",
+          "excludedFileNameExtensions" : ".png,.jpeg",
+          "dataToExtract": "contentAndMetadata",
+          "parsingMode": "default"
+      }
+  },
+  "schedule" : { },
+  "fieldMappings" : [ ]
+}
+```
+
+If all goes well, the indexer should run and this should result in document chunks being created in the index and visible in the portal. 
+
+This index then may be used as the chat with data source for later OpenAI queries. Try the earlier samples against the new index.
+
+
+## Tokens and Embeddings
+The concept of tokens has already been discussed. These roughly relate to words.
+
+Embedding are the mathematical representation of tokens. This is better described by quoting from our documentation:
+
+> An embedding is a special format of data representation that machine learning models and algorithms can easily use. The embedding is an information dense representation of the semantic meaning of a piece of text. Each embedding is a vector of floating-point numbers, such that the distance between two embeddings in the vector space is correlated with semantic similarity between two inputs in the original format. For example, if two texts are similar, then their vector representations should also be similar. Embeddings power vector similarity search in Azure Databases such as Azure Cosmos DB for MongoDB vCore , Azure SQL Database or Azure Database for PostgreSQL - Flexible Server.
+
+https://learn.microsoft.com/en-us/azure/ai-services/openai/concepts/understand-embeddings 
+
+### Task 13 Get the tokens from some text
+This uses an Azure AI Search instance to tokenise the text.
+```
+POST https://{{searchinstance}}.search.windows.net/indexes/{{searchindex}}/analyze?api-version=2020-06-30
+Content-Type: application/json
+api-key: {{searchkey}}
+
+
+{
+  "text": "Contoso Electronics is a leader in the aerospace industry, providing advanced electronic 
+components for both commercial and military aircraft. We specialize in creating cutting-edge systems that are both reliable and efficient. Our mission is to provide the highest 
+quality aircraft components to our customers, while maintaining a commitment to safety 
+and excellence. We are proud to have built a strong reputation in the aerospace industry 
+and strive to continually improve our products and services. Our experienced team of 
+engineers and technicians are dedicated to providing the best products and services to our 
+customers. With our commitment to excellence, we are sure to remain a leader in the 
+aerospace industry for years to come.
+",
+  "analyzer": "standard"
+}
+```
+The response (abbreviated) should be:
+```
+{
+  "@odata.context": "https://jjjdemosearch.search.windows.net/$metadata#Microsoft.Azure.Search.V2020_06_30.AnalyzeResult",
+  "tokens": [
+    {
+      "token": "contoso",
+      "startOffset": 0,
+      "endOffset": 7,
+      "position": 0
+    },
+    {
+      "token": "electronics",
+      "startOffset": 8,
+      "endOffset": 19,
+      "position": 1
+    },
+    {
+      "token": "is",
+      "startOffset": 20,
+      "endOffset": 22,
+      "position": 2
+    },
+    {
+      "token": "a",
+      "startOffset": 23,
+      "endOffset": 24,
+      "position": 3
+    },
+    {
+      "token": "leader",
+      "startOffset": 25,
+      "endOffset": 31,
+      "position": 4
+    },
+
+etc etc
+```
