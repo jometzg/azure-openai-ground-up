@@ -1,6 +1,10 @@
 # Azure OpenAI from the ground up
 ## Introduction
-This tutorial is intended to help your understanding of Azure OpenAI from the developer's perspective. How to programmatically interact with Azure OpenAI and how to run chat sessions against the the [Azure OpenAI REST API](https://learn.microsoft.com/en-us/azure/ai-services/openai/reference).
+This tutorial is intended to help your understanding of Azure OpenAI from the developer's perspective. There has been much discussion of OpenAI, but it is often hard to understand what is really happening underneath - or at least at the API level.
+
+This tutorial takes the approach of demonstrating how the HTTP REST API may be used directly to interact with Azure OpenAI and Azure AI Search. This should hopefully demonstrate how Azure OpenAI works from a programming perspective.
+
+This tutorial references the [Azure OpenAI REST API](https://learn.microsoft.com/en-us/azure/ai-services/openai/reference) documentation.
 
 ## Azure OpenAI
 For a background I have included a PowerPoint introduction to OpenAI from a developers perspective that has been presented at an Azure User Group.
@@ -24,6 +28,8 @@ In the [Azure Portal](https://portal.azure.com/) provision the resources below:
 In addition to the above Azure resources, the tutorial will use Visual Studio code and a marketplace extension  [REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client) that will allow you to execute HTTP REST requests in Visual Studio Code. Alternatively, you can use other techniques, but this tutorial will concentrate on REST Client.
 
 The above should allow you to run all of the steps in this tutorial.
+
+Each of the tasks is also collected into a single file that can be run in Visual Studio Code openai-from-the-ground-up.http
 
 ## Tutorial Steps
 ### Task 1 - your first OpenAI call
