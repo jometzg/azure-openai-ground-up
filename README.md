@@ -721,6 +721,8 @@ api-key: {{searchkey}}
 
 If all goes well, the indexer should run and this should result in document chunks being created in the index and visible in the portal. 
 
+![alt text](./images/search-indexer-run-successful.png "Successful indexing run")
+
 This index then may be used as the chat with data source for later OpenAI queries. 
 
 ### Task 13 Search against your new index
