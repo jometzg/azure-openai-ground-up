@@ -885,12 +885,12 @@ Variations of the requests to populate an Azure AI Search index may be used to g
 As can be seen from these samples, at its baseline Azure OpenAI is a stateless REST API. All of the other tools - in languages and higher-level frameworks build ontop of this.
 
 The central themes are:
-1. Stateless API, so all context needs to be in the request
-2. Models can only respond to their trained data (this is a point in time) plus the contents of the prompt
-3. Sytem prompts can make responses more reliable
-4. Char with your own data makes use of a RAG process to query and extract fragments of documents, which are collected and built into a prompt that is then sent to the same chat endppoint as normal.
-5. There is a standardised RAG process or you can build your own
-6. Tokens are the unit of everything in Azure OpenAI. Roughly they equate to words. They define limits and impact scaling and performance
+1. Stateless API, so all context needs to be in the request.
+2. Models can only respond to their trained data (this is a point in time) plus the contents of the prompt.
+3. Sytem prompts can make responses more reliable.
+4. Chat with your own data makes use of a RAG process to query and extract fragments of documents outside of Azure OpenAI, which are collected and built into a prompt that is then sent to the same chat endpoint as normal.
+5. There is a standardised RAG process in-built or you can build your own.
+6. Tokens are the unit of everything in Azure OpenAI. Roughly they equate to words. Limits are defined in tokens and tokens used in the prompt and generated token impact pricing, scaling and performance.
 7. Embeddings are vector respresentation of tokens. This can make searching more efficient as the vectors are based on the meaning or semantics of the token.
 
    
