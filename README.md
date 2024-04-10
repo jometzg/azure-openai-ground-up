@@ -3,8 +3,9 @@
 This tutorial is intended to help your understanding of Azure OpenAI from the developer's perspective. How to programmatically interact with Azure OpenAI and how to run chat sessions against the the [Azure OpenAI REST API](https://learn.microsoft.com/en-us/azure/ai-services/openai/reference).
 
 ## Azure OpenAI
+For a background I have included a PowerPoint introduction to OpenAI from a developers perspective that has been presented at an Azure User Group.
 
-## Concepts
+See Azure OpenAI Service - Dev Perspective in this repo.
 
 ## Tutorial Prerequisites
 The rest of this tutorial is based around executing HTTP REST requests against Azure OpenAI. All of the other SDKs and frameworks that get used in other programming languages such as Python or C# .NET will use these REST APIs. In addition, higher-level frameworks such as [langchain](https://www.langchain.com/) or [Semantic Kernel](https://github.com/microsoft/semantic-kernel) are built ontop of these APIs.
@@ -16,7 +17,7 @@ In the [Azure Portal](https://portal.azure.com/) provision the resources below:
 4. In this OpenAI resource, open up AI Studio and deploy the following models:
 5.   gpt-35-turbo
 6.   text-embedding-ada-002
-7. For later, deploy a storage account, create a bl;ob container and upload the same PDF from this repo into the blob container
+7. For later, deploy a storage account, create a blob container and upload the same PDF from this repo into the blob container
 8. Create an Azure Search instance
 9. Take a note of its endpoint and key
 
