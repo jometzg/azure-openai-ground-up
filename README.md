@@ -531,3 +531,116 @@ The response is a more complex document with the answer in the *content* tag plu
   }
 }
 ```
+
+### Task 8 Another query not present in the index
+Try another query unrelated to the PDF indexed in Azure AI Search. Here is one example:
+```
+POST https://{{openaiendpoint}}.openai.azure.com/openai/deployments/{{openaichatmodel}}/chat/completions?api-version=2024-02-01
+api-key: {{openaikey}}
+Content-Type: application/json
+
+{
+    "messages": [
+        {
+            "role": "user",
+            "content": "who is the reigning monarch of the United Kingdom?"
+        }
+    ],
+    "data_sources": [
+        {
+            "type": "azure_search",
+            "parameters": {
+                "endpoint": "https://{{searchinstance}}.search.windows.net",
+                "index_name": "{{searchindex}}",
+                "authentication": {
+                    "type": "api_key",
+                    "key": "{{searchkey}}"
+                }
+            }
+        }
+    ]
+}
+```
+This correctly replies that this is not in the data set:
+```
+{
+  "id": "7183e558-3edf-4385-9d32-e335a3d7c817",
+  "model": "gpt-35-turbo",
+  "created": 1712746740,
+  "object": "extensions.chat.completion",
+  "choices": [
+    {
+      "index": 0,
+      "finish_reason": "stop",
+      "message": {
+        "role": "assistant",
+        "content": "The requested information is not found in the retrieved data. Please try another query or topic.",
+        "end_turn": true,
+        "context": {
+          "citations": [],
+          "intent": "[\"Who is the current monarch of the United Kingdom?\", \"Who is the reigning monarch of the United Kingdom?\", \"Current monarch of the United Kingdom\", \"Reigning monarch of the United Kingdom\"]"
+        }
+      }
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 1345,
+    "completion_tokens": 40,
+    "total_tokens": 1385
+  }
+}
+```
+Depending on the context of the question, the calls to this endpoint can be tuned to only use the data in the search index or to use this in addition to the model training data. There are other parameters of this request which may be used to tune this query. See the Azure AI Search [data source](https://learn.microsoft.com/en-us/azure/ai-services/openai/references/azure-search) documentation.
+
+### Task 9 Reduce the number of documents returned form Azure AI Search
+As can be seen from the documentation, there is another parameter that can be sent to reduce the number of documents returned. This is *top_n_documents*. This may be used to reduce the number of fragments returend from Azure AI Search - and so lower the cost of the queries and potentially also increase performance. But at a risk of accuracy in the eventual response.
+
+Change top_no_documents to 3 and run the original query again:
+```
+
+POST https://{{openaiendpoint}}.openai.azure.com/openai/deployments/{{openaichatmodel}}/chat/completions?api-version=2024-02-01
+api-key: {{openaikey}}
+Content-Type: application/json
+
+{
+    "messages": [
+        {
+            "role": "user",
+            "content": "what is the performance review process?"
+        }
+    ],
+    "data_sources": [
+        {
+            "type": "azure_search",
+            "parameters": {
+                "endpoint": "https://{{searchinstance}}.search.windows.net",
+                "index_name": "{{searchindex}}",
+                "authentication": {
+                    "type": "api_key",
+                    "key": "{{searchkey}}"
+                },
+                "top_n_documents": 3
+            }
+        }
+    ]
+}
+```
+
+In this case there may not be much difference, but in other use cases where there are potentially more documents and so more document fragments, this may reduce the accuracy of the response.
+
+## Creating your our Search Index
+Azure AI Search has four concepts that are used with indexing documents:
+1. Data source - this is where the documents are sourced from (in our case blob storage)
+2. Index - this is the resultant index definition that will get used for queries, but needs to be populated with data prior to queries
+3. Indexer - this is an engine that runs against the data source to generate or update the index contents
+4. Skills - optional capabilites that may be use to construct better index contents e.g. chunking, vectorisation etc.
+
+The process to create an index at its most basic is to:
+1. Put one or more documents in blob storage
+2. Define a data source that points to the above
+3. Define the target index definition - this is the right set of fields of the right type so that chat on your data knows how to query the index.
+4. Define and run an indexer which marries the data source (potentially some skills) and the index
+
+You should then have an index with some data. This can be accessed in the Azure Portal:
+
+![alt text](./images/populated_index.png "Populated index")
