@@ -726,6 +726,8 @@ Embedding are the mathematical representation of tokens. This is better describe
 
 https://learn.microsoft.com/en-us/azure/ai-services/openai/concepts/understand-embeddings 
 
+Embeddings are therefore useful in searching efficiently for things that have similar meaning. The same text in a different language, will have similar emnbedding representation, which is useful for multi-lingual use cases.
+
 ### Task 13 Get the tokens from some text
 This uses an Azure AI Search instance to tokenise the text.
 ```
@@ -785,3 +787,67 @@ The response (abbreviated) should be:
 
 etc etc
 ```
+
+### Task 14 Generate the embeddings of some text
+To create the embedding version of some text required the use of Azure OpenAI. As it it Azure OpenAI that will consume these. This is important as if another embedding tool is used, then its vectors may not relate to those in a trained Azure OpenAI model.
+
+At the start in the prerequisites, another model was deployed to your OpenAI instance *text-embedding-ada-002* - it is this model that is used for generating embeddings.
+
+```
+POST https://{{openaiendpoint}}.openai.azure.com/openai/deployments/{{openaiembeddingmodel}}/embeddings?api-version=2023-06-01-preview
+api-key: {{openaikey}}
+Content-Type: application/json
+
+{
+  "input": "Contoso Electronics is a leader in the aerospace industry, providing advanced electronics.",
+  "user": "john"
+}
+```
+This results in an array of numeric vectors that is the embedded version of the above text:
+```
+{
+  "object": "list",
+  "data": [
+    {
+      "object": "embedding",
+      "index": 0,
+      "embedding": [
+        -0.0048754616,
+        -0.006968785,
+        -0.0033701502,
+        -0.028385872,
+        -0.020953396,
+        0.010019729,
+
+...
+...
+
+
+  ],
+  "model": "ada",
+  "usage": {
+    "prompt_tokens": 15,
+    "total_tokens": 15
+  }
+}
+```
+
+These *vectors* are extremely long (many dimensions), but you can see this represents the 15 tokens it found in the input.
+
+In general these embeddings will get used as part of an Azure AI Search index to allow for more efficient retrieval of semantically similar sata.
+
+Variations of the requests to populate an Azure AI Search index may be used to generate vectorised indexes. I have another repo that goes into more detail with this
+
+# SUMMARY
+As can be seen from these samples, at its baseline Azure OpenAI is a stateless REST API. All of the other tools - in languages and higher-level frameworks build ontop of this.
+
+The central themes are:
+1. Stateless API, so all context needs to be in the request
+2. Models can only respond to their trained data (this is a point in time) plus the contents of the prompt
+3. Sytem prompts can make responses more reliable
+4. Char with your own data makes use of a RAG process to query and extract fragments of documents, which are collected and built into a prompt that is then sent to the same chat endppoint as normal.
+5. There is a standardised RAG process or you can build your own
+6. Tokens are the unit of everything in Azure OpenAI. Roughly they equate to words. They define limits and impact scaling and performance
+7. Embeddings are vector respresentation of tokens. This can make searching more efficient as the vectors are based on the meaning or semantics of the token.
+
+   
