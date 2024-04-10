@@ -406,4 +406,6 @@ In previous tasks we have established that:
 
 The most straightforward service for this is on Azure is Azure AI Search (used to be called Cognitive Search). Though it needs to be stated that RAG can use other mechanisms. But for now, this will concentrate on the simplest approach on Azure.
 
-[![alt text]([https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png](https://learn.microsoft.com/en-us/azure/search/media/retrieval-augmented-generation-overview/architecture-diagram.png#lightbox) "Logo Title Text 1")](https://learn.microsoft.com/en-us/azure/search/media/retrieval-augmented-generation-overview/architecture-diagram.png#lightbox)
+[[![alt text]([[https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png](https://learn.microsoft.com/en-us/azure/search/media/retrieval-augmented-generation-overview/architecture-diagram.png)![image](https://github.com/jometzg/azure-openai-ground-up/assets/56820659/a03e7ad7-40a8-4f1c-9d63-e2b4e578a1f2)
+ "RAG process on Azure")](https://learn.microsoft.com/en-us/azure/search/media/retrieval-augmented-generation-overview/architecture-diagram.png)![image](https://github.com/jometzg/azure-openai-ground-up/assets/56820659/3ca22c0c-9707-4092-8306-f8b260cd9f9e)
+
