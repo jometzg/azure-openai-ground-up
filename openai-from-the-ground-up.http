@@ -1,0 +1,289 @@
+### Azure OpenAI from the group up tasks
+### each of the queries is delimited by ###
+### they make use of parameters.
+### these can either be defined in a file, or in .vscode/settings.json
+### variables
+@openaiendpoint=YOUR_RESOURCE_NAME
+@openaichatmode=YOUR_DEPLOYMENT_NAME
+@openaikey=YOUR_RESOURCE_KEY
+
+### Task 1 Your first OpenAI call - substitute the values below
+POST https://YOUR_RESOURCE_NAME.openai.azure.com/openai/deployments/YOUR_DEPLOYMENT_NAME/completions?api-version=2024-02-01
+Content-Type: application/json
+api-key: YOUR_RESOURCE_KEY
+
+{
+    "prompt": "Once upon a time",
+    "max_tokens": 10
+}
+
+### Task 2 Parameterising the REST call
+POST https://{{openaiendpoint}}.openai.azure.com/openai/deployments/{{openaichatmodel}}/completions?api-version=2023-05-15
+api-key: {{openaikey}}
+Content-Type: application/json
+
+{
+    "prompt": "Once upon a time",
+    "max_tokens": 10
+}
+
+### Task 3  Chat Completions
+POST https://{{openaiendpoint}}.openai.azure.com/openai/deployments/{{openaichatmodel}}/chat/completions?api-version=2023-05-15
+api-key: {{openaikey}}
+Content-Type: application/json
+
+{
+    "messages": [
+        {
+            "role": "user",
+            "content": "Does Azure OpenAI support customer managed keys?"
+        }
+    
+    ]
+}
+
+### Task 4 System prompts
+POST https://{{openaiendpoint}}.openai.azure.com/openai/deployments/{{openaichatmodel}}/chat/completions?api-version=2023-05-15
+api-key: {{openaikey}}
+Content-Type: application/json
+
+{
+    "messages": [
+        {
+            "role": "system",
+            "content": "You are an Azure-only assistant. Only give answers from Azure documentation. If the customer asks about another cloud provider, politely decline and respond that you are an Azure assistant."
+        },
+        {
+            "role": "user",
+            "content": "In AWS what is the container service called?"
+        }
+    
+    ]
+}
+
+### Task 5 Understanding more on context
+POST https://{{openaiendpoint}}.openai.azure.com/openai/deployments/{{openaichatmodel}}/chat/completions?api-version=2023-05-15
+api-key: {{openaikey}}
+Content-Type: application/json
+
+{
+    "messages": [
+        {
+            "role": "user",
+            "content": "Who is the reigning monarch of the United Kingdom?"
+        }
+    
+    ]
+}
+
+### Task 6 Conversations
+POST https://{{openaiendpoint}}.openai.azure.com/openai/deployments/{{openaichatmodel}}/chat/completions?api-version=2023-05-15
+api-key: {{openaikey}}
+Content-Type: application/json
+
+{
+    "messages": [
+        {
+            "role": "system",
+            "content": "You are an Azure-only assistant. Only give answers from Azure documentation. If the customer asks about another cloud provider, suggest the Azure equivalent."
+        },
+        {
+            "role": "user",
+            "content": "can I assign a managed identity to an Azure mail enabled AD group?"
+        }
+    ]
+}
+
+### Task 6 Conversations - second part
+POST https://{{openaiendpoint}}.openai.azure.com/openai/deployments/{{openaichatmodel}}/chat/completions?api-version=2023-05-15
+api-key: {{openaikey}}
+Content-Type: application/json
+
+{
+    "messages": [
+        {
+            "role": "system",
+            "content": "You are an Azure-only assistant. Only give answers from Azure documentation. If the customer asks about another cloud provider, suggest the Azure equivalent."
+        },
+        {
+            "role": "user",
+            "content": "can I assign a managed identity to an Azure mail enabled AD group?"
+        },
+        {
+            "role": "assistant",
+            "content": "Yes, it is possible to assign a managed identity to an Azure mail-enabled AD group. This can be done through Azure Active Directory and the steps to do so are outlined in the Microsoft documentation: Assign a managed identity to an Azure AD Mail Enabled Security Group"
+        },
+        {
+            "role": "user",
+            "content": "How do I grant the managed identity permissions to the mail enabled AD group?"
+        }   
+    ]
+}
+
+### Task 7 Your first search against an indexed PDF
+@searchkey =REPLACE_THIS
+@searchinstance =jjjdemosearch
+@searchindex =handbook
+
+POST https://{{openaiendpoint}}.openai.azure.com/openai/deployments/{{openaichatmodel}}/chat/completions?api-version=2024-02-01
+api-key: {{openaikey}}
+Content-Type: application/json
+
+{
+    "messages": [
+        {
+            "role": "user",
+            "content": "what is the performance review process?"
+        }
+    ],
+    "data_sources": [
+        {
+            "type": "azure_search",
+            "parameters": {
+                "endpoint": "https://{{searchinstance}}.search.windows.net",
+                "index_name": "{{searchindex}}",
+                "authentication": {
+                    "type": "api_key",
+                    "key": "{{searchkey}}"
+                }
+            }
+        }
+    ]
+}
+
+### Task 8 Another query not present in the index
+POST https://{{openaiendpoint}}.openai.azure.com/openai/deployments/{{openaichatmodel}}/chat/completions?api-version=2024-02-01
+api-key: {{openaikey}}
+Content-Type: application/json
+
+{
+    "messages": [
+        {
+            "role": "user",
+            "content": "who is the reigning monarch of the United Kingdom?"
+        }
+    ],
+    "data_sources": [
+        {
+            "type": "azure_search",
+            "parameters": {
+                "endpoint": "https://{{searchinstance}}.search.windows.net",
+                "index_name": "{{searchindex}}",
+                "authentication": {
+                    "type": "api_key",
+                    "key": "{{searchkey}}"
+                }
+            }
+        }
+    ]
+}
+
+### Task 9 Reduce the number of documents returned form Azure AI Search
+POST https://{{openaiendpoint}}.openai.azure.com/openai/deployments/{{openaichatmodel}}/chat/completions?api-version=2024-02-01
+api-key: {{openaikey}}
+Content-Type: application/json
+
+{
+    "messages": [
+        {
+            "role": "user",
+            "content": "what is the performance review process?"
+        }
+    ],
+    "data_sources": [
+        {
+            "type": "azure_search",
+            "parameters": {
+                "endpoint": "https://{{searchinstance}}.search.windows.net",
+                "index_name": "{{searchindex}}",
+                "authentication": {
+                    "type": "api_key",
+                    "key": "{{searchkey}}"
+                },
+                "top_n_documents": 3
+            }
+        }
+    ]
+}
+
+### Task 10 Create a data source
+POST https://{{searchinstance}}.search.windows.net/datasources?api-version=2020-06-30
+Content-Type: application/json
+api-key: {{searchkey}}
+
+{
+    "name" : "{{searchdatasource}}",
+    "type" : "azureblob",
+    "credentials" : { "connectionString" : "DefaultEndpointsProtocol=https;AccountName={{blobaccount}};AccountKey={{blobkey}};" },
+    "container" : { "name" : "{{blobcontainer}}", "query" : "" }
+}
+
+### Task 11 Create and Index
+POST https://{{searchinstance}}.search.windows.net/indexes?api-version=2020-06-30
+Content-Type: application/json
+api-key: {{searchkey}}
+
+{
+    "name" : "{{searchdemoindexerdefinition}}",
+    "fields": [
+        { "name": "ID", "type": "Edm.String", "key": true, "searchable": false },
+        { "name": "content", "type": "Edm.String", "searchable": true, "filterable": false },
+        { "name": "metadata_storage_name", "type": "Edm.String", "searchable": false, "filterable": true, "sortable": true  },
+        { "name": "metadata_storage_size", "type": "Edm.Int64", "searchable": false, "filterable": true, "sortable": true  },
+        { "name": "metadata_storage_content_type", "type": "Edm.String", "searchable": false, "filterable": true, "sortable": true }       
+    ]
+}
+
+### Task 12 Create an Indexer
+POST https://{{searchinstance}}.search.windows.net/indexers?api-version=2020-06-30
+Content-Type: application/json
+api-key: {{searchkey}}
+
+{
+  "name" : "{{searchindexer}}",
+  "dataSourceName" : "{{searchdatasource}}",
+  "targetIndexName" : "{{searchdemoindexerdefinition}}",
+  "parameters": {
+      "batchSize": null,
+      "maxFailedItems": null,
+      "maxFailedItemsPerBatch": null,
+      "base64EncodeKeys": null,
+      "configuration": {
+          "indexedFileNameExtensions" : ".pdf,.docx",
+          "excludedFileNameExtensions" : ".png,.jpeg",
+          "dataToExtract": "contentAndMetadata",
+          "parsingMode": "default"
+      }
+  },
+  "schedule" : { },
+  "fieldMappings" : [ ]
+}
+
+### Task 13 Get the tokens from some text
+POST https://{{searchinstance}}.search.windows.net/indexes/{{searchindex}}/analyze?api-version=2020-06-30
+Content-Type: application/json
+api-key: {{searchkey}}
+
+
+{
+  "text": "Contoso Electronics is a leader in the aerospace industry, providing advanced electronic 
+components for both commercial and military aircraft. We specialize in creating cutting-edge systems that are both reliable and efficient. Our mission is to provide the highest 
+quality aircraft components to our customers, while maintaining a commitment to safety 
+and excellence. We are proud to have built a strong reputation in the aerospace industry 
+and strive to continually improve our products and services. Our experienced team of 
+engineers and technicians are dedicated to providing the best products and services to our 
+customers. With our commitment to excellence, we are sure to remain a leader in the 
+aerospace industry for years to come.
+",
+  "analyzer": "standard"
+}
+
+### Task 14 Generate the embeddings of some text
+POST https://{{openaiendpoint}}.openai.azure.com/openai/deployments/{{openaiembeddingmodel}}/embeddings?api-version=2023-06-01-preview
+api-key: {{openaikey}}
+Content-Type: application/json
+
+{
+  "input": "Contoso Electronics is a leader in the aerospace industry, providing advanced electronics.",
+  "user": "john"
+}
