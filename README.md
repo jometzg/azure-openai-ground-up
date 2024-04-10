@@ -5,7 +5,7 @@ This tutorial is intended to help your understanding of Azure OpenAI from the de
 ## Azure OpenAI
 For a background I have included a PowerPoint introduction to OpenAI from a developers perspective that has been presented at an Azure User Group.
 
-See Azure OpenAI Service - Dev Perspective in this repo.
+See "Azure OpenAI Service - Dev Perspective.pdf" in this repo.
 
 ## Tutorial Prerequisites
 The rest of this tutorial is based around executing HTTP REST requests against Azure OpenAI. All of the other SDKs and frameworks that get used in other programming languages such as Python or C# .NET will use these REST APIs. In addition, higher-level frameworks such as [langchain](https://www.langchain.com/) or [Semantic Kernel](https://github.com/microsoft/semantic-kernel) are built ontop of these APIs.
