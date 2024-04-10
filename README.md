@@ -410,6 +410,8 @@ The most straightforward service for this is on Azure is [Azure AI Search](https
 
 In the diagram above, Azure AI Search is used to index data from one of a number of potential sources. One straightforward example is PDF documents stored in an Azure Blob Storage container. The *indexing* process is completely separate from the querying prompt process, so in order to use Azure AI Search in a RAG process, there must be a process that scans the blob storage container and indexes the result. This will be covered in later tasks, but what you end up with is a named index that may be used on the prompt.
 
+In the RAG process, the user's prompt is first sent to the retrieval engine - in this case Azure AI Search. The results of this query, which will generally be a short list of document fragments and then used to build the prompt to Azure OpenAI, which is then sent and the results retrieved. This is a simple RAG process. by default, the indexing process in Azure AI Search creates a series of document fragments which are about 1000 tokens long and the default behaviour is for the Azure AI Search query to return the first 5 matching document fragments. This therefore makes a prompt of about 5k tokens - well within the capabilities of most Azure OpenAI model deployments.
+
 The Azure OpenAI REST API already implements a standardised RAG process - so customers do not (initially at least) need to build this RAG process in code. This is documented under [completion extensions](https://learn.microsoft.com/en-us/azure/ai-services/openai/reference#completions-extensions). The REST API call then defines the datasource for the indexed data as well as the actual user and system prompts.
 
 ```
