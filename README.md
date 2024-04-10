@@ -32,7 +32,7 @@ The above should allow you to run all of the steps in this tutorial.
 Each of the tasks is also collected into a single file that can be run in Visual Studio Code openai-from-the-ground-up.http
 
 ## Tutorial Steps
-### Task 1 - your first OpenAI call
+### Task Your first OpenAI call
 Inside Visual Studio code, create a new file and save as "openai-samples.http". This will then indicate to VS Code that the REST client can then use this file to execute HTTP REST requests.
 
 In the blank file type:
@@ -95,7 +95,7 @@ Try varying the *max_tokens* to see how this impacts the response.
 
 There are also a lot of potentially interesting HTTP headers which may be used to understand more about the service and its capacity.
 
-### Task 2 - parameterising the REST call
+### Task 2 Parameterising the REST call
 The REST client has several ways in which calls to APIs can be parameterised. This is really useful for later calls. The simplest approach is to declare some variables, set their value and then use these variables in the REST call.
 
 The REST client has the means of having multiple requests in one file. These can be separated by a comment line. Add below to the file after the first request
@@ -138,7 +138,7 @@ The above should allow you to reuse the parameters on later requests. A better w
 ```
 In the above, there are local and production for distinct values and $shared for common values across environments. In VS Code this gets stored in .vscode with the name *settings.json*. This is the preferred method for dealing with variables, especially secrets such as OpenAI keys.
 
-### Task 3 - chat completions
+### Task 3 Chat completions
 In the first examples, we are providing a simple prompt which then gets completed.
 
 Most OpenAI implementations want to do chat - that is one or more questions that form a chat. This allows the easy creation of starting with a general question and then later asking a another question about the response. This mimics the ways in which humans discover information from others - starting more general and then honing the next question based on the response.
@@ -189,7 +189,7 @@ Executing this request should produce something like (removing the response head
 ```
 Note that the response format is also different.
 
-### Task 4 system prompts
+### Task 4 System prompts
 In most chat scenarios our customers may want to build, just presenting Azure OpenAI with the user's query or prompt may be a little too uncontrolled. It would be really useful if the chat could be directed to answer the question in specfic ways or to restrict how the chat will respond to a user's prompt.
 
 This is a whole subject area called [prompt engineering](https://en.wikipedia.org/wiki/Prompt_engineering). All of this us used to create a *system prompt* that gets sent to the API alongdise the actual user's prompt.
@@ -249,7 +249,7 @@ In general, it can take much testing and refinement to end up with an effective 
 
 Prompt engineering is one of the main ways in which a user of the chat application can be stopped from subverting the intention of the chat application. This is know as [jailbreaking](https://learnprompting.org/docs/prompt_hacking/jailbreaking). End customer facing (as opposed to internally-facing) applications could be targets of jailbreaking attempts. Whilst most of these can be harmless, some of these may cause reputational damage to the organisation. 
 
-### Task 5 - understanding more on context
+### Task 5 Understanding more on context
 Enter this query:
 ```
 
@@ -298,7 +298,7 @@ gpt4 may give a more accurate answer.
 
 This is to illustrate that the completion is based on 2 things. Firstly when the underlying model's training was performed and secondly on the prompt given. This is important to understand.
 
-### Task 6 - conversations
+### Task 6 Conversations
 As previously discussed, the Azure OpenAI API is stateless. That is it can only do a completion based upon the combination of its knowledge from its training and the prompt sent to it.
 
 To mimic a conversation, each step of that conversation will add to the context sent to the API. At an API level, this is really simple, the JSON message sent to the API must add each user and *assistant* prompt as the user progresses through the conversation.
@@ -403,7 +403,7 @@ This gives a response:
 ```
 In summary, conversations are just stateless API calls with the conversation history embedded in the prompt. Each of these items in the conversation history consumes tokens and so will be a factor in the performance and cost of the system. Ever increasing conversations can then hit a token limit. So control of conversation sessions is important for all applications.
 
-## Retrieval Augmented Generation
+## Retrieval Augmented Generation (RAG)
 In previous tasks we have established that:
 1. The Azure OpenAI APIs are stateless
 2. The total context that the APIs have is therefore a combination of when the model was trained (its knowledge) and the prompt you give it.
