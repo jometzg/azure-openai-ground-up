@@ -397,3 +397,13 @@ This gives a response:
 In summary, conversations are just stateless API calls with the conversation history embedded in the prompt. Each of these items in the conversation history consumes tokens and so will be a factor in the performance and cost of the system. Ever increasing conversations can then hit a token limit. So control of conversation sessions is important for all applications.
 
 ### Task 7 Retrieval Augmented Generation
+In previous tasks we have established that:
+1. The Azure OpenAI APIs are stateless
+2. The total context that the APIs have is therefore a combination of when the model was trained (its knowledge) and the prompt you give it.
+3. There are limits to the amount of information that may be given in prompts - this is the number of tokens. So it is not possible to put a large number of documents into an OpenAI completion prompt.
+
+[Retrieval Augmented Generation](https://learn.microsoft.com/en-us/azure/search/retrieval-augmented-generation-overview) (RAG) seeks to solve this problem by having a multi-step process to add extra grounding data to the prompt - without exceeeding prompt limits. This is implemented by having another service that works alongside Azure OpenAI to retrieve document fragments from previously indexed data. 
+
+The most straightforward service for this is on Azure is Azure AI Search (used to be called Cognitive Search). Though it needs to be stated that RAG can use other mechanisms. But for now, this will concentrate on the simplest approach on Azure.
+
+[![alt text]([https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png](https://learn.microsoft.com/en-us/azure/search/media/retrieval-augmented-generation-overview/architecture-diagram.png#lightbox) "Logo Title Text 1")](https://learn.microsoft.com/en-us/azure/search/media/retrieval-augmented-generation-overview/architecture-diagram.png#lightbox)
