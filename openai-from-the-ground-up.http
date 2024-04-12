@@ -232,14 +232,14 @@ Content-Type: application/json
     ]
 }
 
-### Task 10 Create a data source
-@blobaccount=YOUR_STORAGE_ACCOUNT_NAME
-@blobkey=YOUR_STORAGE_ACCOUNT_KEY
-@blobcontainer=hrdocs
-@searchinstance=YOUR_AI_SEARCH_SERVICE_NAME
-@searchkey=YOUR_AI_SEARCH_SERVICE_KEY
-@searchindex=handbook
-@searchdatasource=hrdatasource
+### Task 10 Create a data source - uncomment and update these before this next section
+###@blobaccount=YOUR_STORAGE_ACCOUNT_NAME
+###@blobkey=YOUR_STORAGE_ACCOUNT_KEY
+###@blobcontainer=hrdocs
+###@searchinstance=YOUR_AI_SEARCH_SERVICE_NAME
+###@searchkey=YOUR_AI_SEARCH_SERVICE_KEY
+###@searchindex=handbook
+###@searchdatasource=hrdatasource
 
 POST https://{{searchinstance}}.search.windows.net/datasources?api-version=2020-06-30
 Content-Type: application/json
