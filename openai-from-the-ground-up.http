@@ -4,7 +4,7 @@
 ### these can either be defined in a file, or in .vscode/settings.json
 ### variables
 @openaiendpoint=YOUR_RESOURCE_NAME
-@openaichatmode=gpt-35-turbo
+@openaichatmodel=gpt-35-turbo
 @openaikey=YOUR_RESOURCE_KEY
 
 ### Task 1 Your first OpenAI call - substitute the values below
