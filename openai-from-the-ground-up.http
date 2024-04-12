@@ -151,6 +151,32 @@ Content-Type: application/json
     ]
 }
 
+### Task 7a Search against an indexed PDF (managed identity)
+POST https://{{openaiendpoint}}.openai.azure.com/openai/deployments/{{openaichatmodel}}/chat/completions?api-version=2024-02-01
+api-key: {{openaikey}}
+Content-Type: application/json
+
+{
+    "messages": [
+        {
+            "role": "user",
+            "content": "what is the performance review process?"
+        }
+    ],
+    "data_sources": [
+        {
+            "type": "azure_search",
+            "parameters": {
+                "endpoint": "https://{{searchinstance}}.search.windows.net",
+                "index_name": "{{searchindex}}",
+                "authentication": {
+                    "type": "system_assigned_managed_identity"
+                }
+            }
+        }
+    ]
+}
+
 ### Task 8 Another query not present in the index
 POST https://{{openaiendpoint}}.openai.azure.com/openai/deployments/{{openaichatmodel}}/chat/completions?api-version=2024-02-01
 api-key: {{openaikey}}
