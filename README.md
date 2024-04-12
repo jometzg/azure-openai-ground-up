@@ -487,8 +487,6 @@ Content-Type: application/json
 ```
 In the above, the user is asking about the performance reivew process against the *handbook* index in the Azure AI Search instance jjjdemosearch.
 
-Azure OpenAI itself needs to authenticate against Azure AI Search to allow it to access the index. The simplest solution is an API key. Production deployments are likely to use the managed identity of Azure OpenAI, thus a key not being needed. For this to work a managed identity of the Azure OpenAI instance needs to be enabled and a role assignment created to Azure AI Search with the correct role. 
-
 The response is a more complex document with the answer in the *content* tag plus some citations. These citations are extracted from Azure AI Search and are included in the response so that the user interface can reference these citations without futher calls to Azure OpenAI.
 ```
 {
@@ -540,6 +538,20 @@ The response is a more complex document with the answer in the *content* tag plu
   }
 }
 ```
+
+Azure OpenAI itself needs to authenticate against Azure AI Search to allow it to access the index. The simplest solution is an API key. This is why the AI Search key is in the request body. Production deployments are likely to use the managed identity of Azure OpenAI, thus a key not being needed. For this to work a managed identity of the Azure OpenAI instance needs to be enabled and a role assignment created to Azure AI Search with the correct role (required roles: Search Index Data Reader, Search Service Contributor). See https://learn.microsoft.com/en-us/azure/ai-services/openai/references/on-your-data?tabs=python#examples
+
+As a stretch task, you could also set Azure AI Search to use the managed identity of your Azure OpenAI service. 
+
+Hint: the request body needs to be changed:
+```
+"authentication": {
+   "type": "system_assigned_managed_identity"
+}
+```
+
+This should then work in exaclty the same way as the request that uses the AI Search key. It can take several minutes for the role assignments to be registers, so initial calls may fail.
+
 
 ### Task 8 Another query not present in the index
 Try another query unrelated to the PDF indexed in Azure AI Search. Here is one example:
