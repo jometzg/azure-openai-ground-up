@@ -454,6 +454,8 @@ curl -i -X POST YOUR_RESOURCE_NAME/openai/deployments/YOUR_DEPLOYMENT_NAME/exten
 ### Task 7 Your first search against an indexed PDF
 To simplify this next step, a previous index will be provided that has already been populated from a ficticious corporation's [Employee Handbook([./samples/employee_handbook.pdf](https://github.com/jometzg/azure-openai-ground-up/blob/main/samples/employee_handbook.pdf)). In later steps, this index will be built from a PDF file that is in a blob storage container.
 
+[!NOTE] The next few tasks use a pre-populated Azure AI Search index. If you don't have access to a pre-populated AI Search index, execute tasks 10-12 to create and populate an index from the included *employee_handbook.pdf*
+
 ```
 ### chat with private data from an Azure Search index named "handbook" - which is over the employee handbook PDF
 @searchkey =REPLACE_THIS
