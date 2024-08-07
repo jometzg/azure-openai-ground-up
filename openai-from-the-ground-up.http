@@ -120,6 +120,44 @@ Content-Type: application/json
     ]
 }
 
+### Task 6a Function calling
+POST https://{{openaiendpoint}}.openai.azure.com/openai/deployments/{{openaichatmodel}}/chat/completions?api-version=2024-06-01
+api-key: {{openaikey}}
+Content-Type: application/json
+
+{
+   "messages": [
+   {
+      "role": "system",
+      "content": "you're a helpful assistant. Use the supplied tools to assist the user"
+   },
+   {
+      "role": "user",
+      "content": "What's the current time in San Francisco?"
+   }
+   ],
+   "tools": [
+        {
+            "type": "function",
+            "function": {
+                "name": "get_current_time",
+                "description": "Get the current time in a given location",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "location": {
+                            "type": "string",
+                            "description": "The city name, e.g. San Francisco"
+                        }
+                    },
+                    "required": ["location"]
+                }
+            }
+        }
+    ]
+}
+
+
 ### Task 7 Your first search against an indexed PDF
 @searchkey=REPLACE_THIS
 @searchinstance=jjjdemosearch
