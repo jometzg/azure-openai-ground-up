@@ -403,6 +403,114 @@ This gives a response:
 ```
 In summary, conversations are just stateless API calls with the conversation history embedded in the prompt. Each of these items in the conversation history consumes tokens and so will be a factor in the performance and cost of the system. Ever increasing conversations can then hit a token limit. So control of conversation sessions is important for all applications.
 
+
+### Task 6a function calling
+Function calling is where we give a hint to the call to OpenAI that there are functions available that could be used by the LLM.
+
+For OpenAI, this is documented [here](https://platform.openai.com/docs/guides/function-calling) and for Azure OpenAI, it is documented [here](https://learn.microsoft.com/en-us/azure/ai-services/openai/how-to/function-calling).
+
+At this level, the response from the LLM is to return what function could be called and its parameters. The LLM **does not make any function calls** but it provides meta data for you to do that yourself.
+
+There is a *tools* section in the JSON request, which is used to define the shape of a function and what it can do. This allows the LLM to work out how to call the function as part of its response.
+
+```
+POST https://{{openaiendpoint}}.openai.azure.com/openai/deployments/{{openaichatmodel}}/chat/completions?api-version=2024-06-01
+api-key: {{openaikey}}
+Content-Type: application/json
+
+{
+   "messages": [
+   {
+      "role": "system",
+      "content": "you're a helpful assistant. Use the supplied tools to assist the user"
+   },
+   {
+      "role": "user",
+      "content": "What's the current time in San Francisco?"
+   }
+   ],
+   "tools": [
+        {
+            "type": "function",
+            "function": {
+                "name": "get_current_time",
+                "description": "Get the current time in a given location",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "location": {
+                            "type": "string",
+                            "description": "The city name, e.g. San Francisco"
+                        }
+                    },
+                    "required": ["location"]
+                }
+            }
+        }
+    ]
+}
+```
+This gives a response
+```
+{
+  "choices": [
+    {
+      "content_filter_results": {},
+      "finish_reason": "tool_calls",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": null,
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"location\":\"San Francisco\"}",
+              "name": "get_current_time"
+            },
+            "id": "call_qemCV2lqzIvdScAGVocOHpe5",
+            "type": "function"
+          }
+        ]
+      }
+    }
+  ],
+  "created": 1723048981,
+  "id": "chatcmpl-9te2Xky3VxIem9JRMdUm0aEw20rRj",
+  "model": "gpt-4o-2024-05-13",
+  "object": "chat.completion",
+  "prompt_filter_results": [
+    {
+      "prompt_index": 0,
+      "content_filter_results": {
+        "hate": {
+          "filtered": false,
+          "severity": "safe"
+        },
+        "self_harm": {
+          "filtered": false,
+          "severity": "safe"
+        },
+        "sexual": {
+          "filtered": false,
+          "severity": "safe"
+        },
+        "violence": {
+          "filtered": false,
+          "severity": "safe"
+        }
+      }
+    }
+  ],
+  "system_fingerprint": "fp_abc28019ad",
+  "usage": {
+    "completion_tokens": 16,
+    "prompt_tokens": 80,
+    "total_tokens": 96
+  }
+}
+```
+
 ## Retrieval Augmented Generation (RAG)
 In previous tasks we have established that:
 1. The Azure OpenAI APIs are stateless
