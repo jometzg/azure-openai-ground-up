@@ -475,41 +475,12 @@ This gives a response
       }
     }
   ],
-  "created": 1723048981,
-  "id": "chatcmpl-9te2Xky3VxIem9JRMdUm0aEw20rRj",
-  "model": "gpt-4o-2024-05-13",
-  "object": "chat.completion",
-  "prompt_filter_results": [
-    {
-      "prompt_index": 0,
-      "content_filter_results": {
-        "hate": {
-          "filtered": false,
-          "severity": "safe"
-        },
-        "self_harm": {
-          "filtered": false,
-          "severity": "safe"
-        },
-        "sexual": {
-          "filtered": false,
-          "severity": "safe"
-        },
-        "violence": {
-          "filtered": false,
-          "severity": "safe"
-        }
-      }
-    }
-  ],
-  "system_fingerprint": "fp_abc28019ad",
-  "usage": {
-    "completion_tokens": 16,
-    "prompt_tokens": 80,
-    "total_tokens": 96
-  }
+
+ ....
+
 }
 ```
+As can be seen above, the response message returns with *tool_calls* and to call the function *get_current_time* with one parameter *location* with the value *san Fransisco*. This can then be parsed by code and the actual function called. Frameworks such as semantic kernel automate this process for you.
 
 ## Retrieval Augmented Generation (RAG)
 In previous tasks we have established that:
