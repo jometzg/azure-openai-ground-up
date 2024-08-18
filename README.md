@@ -89,6 +89,8 @@ Connection: close
   }
 }
 ```
+>> Recent testing on various models seems to show this basic *completions* endpoint may be deprecated. If so, move to the *chat completions version*
+
 What can be seen from above is that it worked (there will be a different answer each time) and that it used 4 prompt tokens and 10 completion tokens.
 
 Try varying the *max_tokens* to see how this impacts the response.
