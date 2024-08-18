@@ -6,9 +6,10 @@
 @openaiendpoint=YOUR_RESOURCE_NAME
 @openaichatmodel=gpt-35-turbo
 @openaikey=YOUR_RESOURCE_KEY
+@api-version=2024-06-01
 
 ### Task 1 Your first OpenAI call - substitute the values below
-POST https://YOUR_RESOURCE_NAME.openai.azure.com/openai/deployments/YOUR_DEPLOYMENT_NAME/completions?api-version=2024-02-01
+POST https://YOUR_RESOURCE_NAME.openai.azure.com/openai/deployments/YOUR_DEPLOYMENT_NAME/completions?api-version={{api-version}}
 Content-Type: application/json
 api-key: YOUR_RESOURCE_KEY
 
@@ -18,7 +19,7 @@ api-key: YOUR_RESOURCE_KEY
 }
 
 ### Task 2 Parameterising the REST call
-POST https://{{openaiendpoint}}.openai.azure.com/openai/deployments/{{openaichatmodel}}/completions?api-version=2023-05-15
+POST https://{{openaiendpoint}}.openai.azure.com/openai/deployments/{{openaichatmodel}}/completions?api-version={{api-version}}
 api-key: {{openaikey}}
 Content-Type: application/json
 
@@ -28,7 +29,7 @@ Content-Type: application/json
 }
 
 ### Task 3  Chat Completions
-POST https://{{openaiendpoint}}.openai.azure.com/openai/deployments/{{openaichatmodel}}/chat/completions?api-version=2023-05-15
+POST https://{{openaiendpoint}}.openai.azure.com/openai/deployments/{{openaichatmodel}}/chat/completions?api-version={{api-version}}
 api-key: {{openaikey}}
 Content-Type: application/json
 
@@ -43,7 +44,7 @@ Content-Type: application/json
 }
 
 ### Task 4 System prompts
-POST https://{{openaiendpoint}}.openai.azure.com/openai/deployments/{{openaichatmodel}}/chat/completions?api-version=2023-05-15
+POST https://{{openaiendpoint}}.openai.azure.com/openai/deployments/{{openaichatmodel}}/chat/completions?api-version={{api-version}}
 api-key: {{openaikey}}
 Content-Type: application/json
 
@@ -62,7 +63,7 @@ Content-Type: application/json
 }
 
 ### Task 5 Understanding more on context
-POST https://{{openaiendpoint}}.openai.azure.com/openai/deployments/{{openaichatmodel}}/chat/completions?api-version=2023-05-15
+POST https://{{openaiendpoint}}.openai.azure.com/openai/deployments/{{openaichatmodel}}/chat/completions?api-version={{api-version}}
 api-key: {{openaikey}}
 Content-Type: application/json
 
@@ -77,7 +78,7 @@ Content-Type: application/json
 }
 
 ### Task 6 Conversations
-POST https://{{openaiendpoint}}.openai.azure.com/openai/deployments/{{openaichatmodel}}/chat/completions?api-version=2023-05-15
+POST https://{{openaiendpoint}}.openai.azure.com/openai/deployments/{{openaichatmodel}}/chat/completions?api-version={{api-version}}
 api-key: {{openaikey}}
 Content-Type: application/json
 
@@ -95,7 +96,7 @@ Content-Type: application/json
 }
 
 ### Task 6 Conversations - second part
-POST https://{{openaiendpoint}}.openai.azure.com/openai/deployments/{{openaichatmodel}}/chat/completions?api-version=2023-05-15
+POST https://{{openaiendpoint}}.openai.azure.com/openai/deployments/{{openaichatmodel}}/chat/completions?api-version={{api-version}}
 api-key: {{openaikey}}
 Content-Type: application/json
 
@@ -121,7 +122,7 @@ Content-Type: application/json
 }
 
 ### Task 6a Function calling
-POST https://{{openaiendpoint}}.openai.azure.com/openai/deployments/{{openaichatmodel}}/chat/completions?api-version=2024-06-01
+POST https://{{openaiendpoint}}.openai.azure.com/openai/deployments/{{openaichatmodel}}/chat/completions?api-version={{api-version}}
 api-key: {{openaikey}}
 Content-Type: application/json
 
@@ -160,10 +161,10 @@ Content-Type: application/json
 
 ### Task 7 Your first search against an indexed PDF
 @searchkey=REPLACE_THIS
-@searchinstance=jjjdemosearch
-@searchindex=handbook
+@searchinstance=jjtestsearch
+@searchindexdemo=demo
 
-POST https://{{openaiendpoint}}.openai.azure.com/openai/deployments/{{openaichatmodel}}/chat/completions?api-version=2024-02-01
+POST https://{{openaiendpoint}}.openai.azure.com/openai/deployments/{{openaichatmodel}}/chat/completions?api-version={{api-version}}
 api-key: {{openaikey}}
 Content-Type: application/json
 
@@ -179,7 +180,7 @@ Content-Type: application/json
             "type": "azure_search",
             "parameters": {
                 "endpoint": "https://{{searchinstance}}.search.windows.net",
-                "index_name": "{{searchindex}}",
+                "index_name": "{{searchindexdemo}}",
                 "authentication": {
                     "type": "api_key",
                     "key": "{{searchkey}}"
@@ -190,7 +191,7 @@ Content-Type: application/json
 }
 
 ### Task 7a Search against an indexed PDF (managed identity)
-POST https://{{openaiendpoint}}.openai.azure.com/openai/deployments/{{openaichatmodel}}/chat/completions?api-version=2024-02-01
+POST https://{{openaiendpoint}}.openai.azure.com/openai/deployments/{{openaichatmodel}}/chat/completions?api-version={{api-version}}
 api-key: {{openaikey}}
 Content-Type: application/json
 
@@ -206,7 +207,7 @@ Content-Type: application/json
             "type": "azure_search",
             "parameters": {
                 "endpoint": "https://{{searchinstance}}.search.windows.net",
-                "index_name": "{{searchindex}}",
+                "index_name": "{{searchindexdemo}}",
                 "authentication": {
                     "type": "system_assigned_managed_identity"
                 }
@@ -216,7 +217,7 @@ Content-Type: application/json
 }
 
 ### Task 8 Another query not present in the index
-POST https://{{openaiendpoint}}.openai.azure.com/openai/deployments/{{openaichatmodel}}/chat/completions?api-version=2024-02-01
+POST https://{{openaiendpoint}}.openai.azure.com/openai/deployments/{{openaichatmodel}}/chat/completions?api-version={{api-version}}
 api-key: {{openaikey}}
 Content-Type: application/json
 
@@ -232,7 +233,7 @@ Content-Type: application/json
             "type": "azure_search",
             "parameters": {
                 "endpoint": "https://{{searchinstance}}.search.windows.net",
-                "index_name": "{{searchindex}}",
+                "index_name": "{{searchindexdemo}}",
                 "authentication": {
                     "type": "api_key",
                     "key": "{{searchkey}}"
@@ -243,7 +244,7 @@ Content-Type: application/json
 }
 
 ### Task 9 Reduce the number of documents returned form Azure AI Search
-POST https://{{openaiendpoint}}.openai.azure.com/openai/deployments/{{openaichatmodel}}/chat/completions?api-version=2024-02-01
+POST https://{{openaiendpoint}}.openai.azure.com/openai/deployments/{{openaichatmodel}}/chat/completions?api-version={{api-version}}
 api-key: {{openaikey}}
 Content-Type: application/json
 
@@ -259,7 +260,7 @@ Content-Type: application/json
             "type": "azure_search",
             "parameters": {
                 "endpoint": "https://{{searchinstance}}.search.windows.net",
-                "index_name": "{{searchindex}}",
+                "index_name": "{{searchindexdemo}}",
                 "authentication": {
                     "type": "api_key",
                     "key": "{{searchkey}}"
@@ -279,7 +280,7 @@ Content-Type: application/json
 ###@searchindex=handbook
 ###@searchdatasource=hrdatasource
 
-POST https://{{searchinstance}}.search.windows.net/datasources?api-version=2020-06-30
+POST https://{{searchinstance}}.search.windows.net/datasources?api-version={{api-version}}
 Content-Type: application/json
 api-key: {{searchkey}}
 
@@ -293,7 +294,7 @@ api-key: {{searchkey}}
 ### Task 11 Create and Index
 @hrindex=hrdocsindex
 
-POST https://{{searchinstance}}.search.windows.net/indexes?api-version=2020-06-30
+POST https://{{searchinstance}}.search.windows.net/indexes?api-version={{api-version}}
 Content-Type: application/json
 api-key: {{searchkey}}
 
@@ -311,7 +312,7 @@ api-key: {{searchkey}}
 ### Task 12 Create an Indexer
 @searchindexer=hrdocsindexer
 
-POST https://{{searchinstance}}.search.windows.net/indexers?api-version=2020-06-30
+POST https://{{searchinstance}}.search.windows.net/indexers?api-version={{api-version}}
 Content-Type: application/json
 api-key: {{searchkey}}
 
@@ -336,7 +337,7 @@ api-key: {{searchkey}}
 }
 
 ### Task 13 Search against your own index
-POST https://{{openaiendpoint}}.openai.azure.com/openai/deployments/{{openaichatmodel}}/chat/completions?api-version=2024-02-01
+POST https://{{openaiendpoint}}.openai.azure.com/openai/deployments/{{openaichatmodel}}/chat/completions?api-version={{api-version}}
 api-key: {{openaikey}}
 Content-Type: application/json
 
@@ -382,7 +383,7 @@ aerospace industry for years to come.
 }
 
 ### Task 15 Generate the embeddings of some text
-POST https://{{openaiendpoint}}.openai.azure.com/openai/deployments/{{openaiembeddingmodel}}/embeddings?api-version=2023-06-01-preview
+POST https://{{openaiendpoint}}.openai.azure.com/openai/deployments/{{openaiembeddingmodel}}/embeddings?api-version={{api-version}}
 api-key: {{openaikey}}
 Content-Type: application/json
 
